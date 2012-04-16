@@ -1,0 +1,9 @@
+Package: rcloud
+Type: Package
+Title: What the package does (short line)
+Version: 0.1
+Date: 2012-04-11
+Author: Jack DiMassimo
+Maintainer: Jack DiMassimo <jvdimas@gmail.com>
+Description: More about what it does (maybe more than one line)
+License: What license is it under?
