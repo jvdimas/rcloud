@@ -1,9 +1,9 @@
 Package: rcloud
 Type: Package
-Title: What the package does (short line)
+Title: Interface to compute using PiCloud's remote resources
 Version: 0.1
-Date: 2012-04-11
+Date: 2012-04-15
 Author: Jack DiMassimo
 Maintainer: Jack DiMassimo <jvdimas@gmail.com>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Description: More information to come.
+License: BSD 3 Clause License

@@ -1,0 +1,8 @@
+rcloud aims to provide a package for R programmers to access PiCloud's computational resources easily from within R to more quickly solve CPU bound problems.
+
+Its goals are similar to segue with the fundmanetal difference that it is built on PiCloud instead of AWS directly. I hope that this will have the following advantages:
+
+- Fractional billing rounded to the nearest millisecond. (PiCloud does charge more so very large computations it is likely to be more exensive).
+- No need to wait for EMR instances to become ready after booting and bootstrapping
+- Leverge web interface already built by PiCloud
+- Host computer is not a single point of failure -- computational results stored by PiCloud. Can start a job and shutdown your computer while the result is computed
