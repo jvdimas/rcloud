@@ -138,7 +138,7 @@ rcloud.rest.result <- function(jid, key = NULL, secret.key = NULL,
   fromJSON(result)
 }
 
-rcloud.rest.file.get <- function(filename, key = NULL, secret.key = NULL,
+rcloud.rest.files.get <- function(filename, key = NULL, secret.key = NULL,
                                  ssl.verifypeer = FALSE, ssl.verifyhost = FALSE,
                                  timeout = 5)
 {
@@ -153,7 +153,7 @@ rcloud.rest.file.get <- function(filename, key = NULL, secret.key = NULL,
   fromJSON(response)
 }
 
-rcloud.rest.file.put <- function(filename, key = NULL, secret.key = NULL,
+rcloud.rest.files.put <- function(filename, key = NULL, secret.key = NULL,
                                  ssl.verifypeer = FALSE, ssl.verifyhost = FALSE,
                                  timeout = 5)
 {
@@ -168,7 +168,7 @@ rcloud.rest.file.put <- function(filename, key = NULL, secret.key = NULL,
   fromJSON(response)
 }
 
-rcloud.rest.file.list <- function(key = NULL, secret.key = NULL,
+rcloud.rest.files.list <- function(key = NULL, secret.key = NULL,
                                   ssl.verifyhost = FALSE,
                                   ssl.verifypeer = FALSE,
                                   timeout = 5)
@@ -182,7 +182,7 @@ rcloud.rest.file.list <- function(key = NULL, secret.key = NULL,
   fromJSON(response)
 }
 
-rcloud.rest.file.exists <- function(filename, key = NULL, secret.key = NULL,
+rcloud.rest.files.exists <- function(filename, key = NULL, secret.key = NULL,
                                     ssl.verifyhost = FALSE,
                                     ssl.verifypeer = FALSE,
                                     timeout = 5)
@@ -198,7 +198,7 @@ rcloud.rest.file.exists <- function(filename, key = NULL, secret.key = NULL,
   fromJSON(response)
 }
 
-rcloud.rest.file.delete <- function(filename, key = NULL, secret.key = NULL,
+rcloud.rest.files.delete <- function(filename, key = NULL, secret.key = NULL,
                                     ssl.verifyhost = FALSE,
                                     ssl.verifypeer = FALSE,
                                     timeout = 5)
