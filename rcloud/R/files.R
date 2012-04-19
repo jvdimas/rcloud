@@ -1,5 +1,7 @@
 # TODO: Error Handling
 
+# TODO: New functions: rcloud.files.sync_to_cloud, rcloud.files.sync_from_cloud??
+
 #' Put a file to your PiCloud S3 bucket
 #' Requires that PiCloud api key has been set (rcloud.setkey)
 #' 
