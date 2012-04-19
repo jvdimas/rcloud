@@ -5,5 +5,6 @@ Version: 0.1
 Date: 2012-04-15
 Author: Jack DiMassimo
 Maintainer: Jack DiMassimo <jvdimas@gmail.com>
+Depends: RCurl, rjson
 Description: More information to come.
-License: BSD 3 Clause License
+License: file LICENSE
