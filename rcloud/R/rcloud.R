@@ -57,11 +57,10 @@ rcloud.finished <- function(jids)
 {
   result <- rcloud.rest.info(jids)
   
-  done = TRUE
   for(jid in names(result$info)) {
-    if(result$info[[jid]]$status != "done") done = FALSE
+    if(result$info[[jid]]$status != "done") return(FALSE)
   }
-  done
+  TRUE
 }
 
 #' Retrieves the result of jobs from the PiCloud server
