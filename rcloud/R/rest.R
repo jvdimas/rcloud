@@ -54,7 +54,7 @@ rcloud.setkey <- function(key, secret.key)
 rcloud.rest.call <- function(function.name, uid, params = list(), key = NULL, 
                              secret.key = NULL,
                              ssl.verifypeer = FALSE, ssl.verifyhost = FALSE, timeout = 5,
-                             api.url = "https://api.picloud.com/") 
+                             api.url = "http://api.picloud.com/") 
 {
   request <- paste("r", uid, function.name, "", sep="/")
   
@@ -135,7 +135,11 @@ rcloud.rest.result <- function(jid, key = NULL, secret.key = NULL,
                                  ssl.verifyhost = ssl.verifyhost, 
                                  ssl.verifypeer = ssl.verifypeer,
                                  timeout = timeout)
-  fromJSON(result)
+
+  # The result could be either binary or JSON. Attempt to parse the JSON, if that
+  # fails try to unserialize it. (If that fails....)
+  tryCatch(return(fromJSON(result)), 
+           error = function(e) return(unserialize(charToRaw(result))))
 }
 
 rcloud.rest.files.get <- function(filename, key = NULL, secret.key = NULL,

@@ -1,0 +1,55 @@
+#' Executes a function remotely on the PiCloud infrastructure
+#' Requires that rcloud.setkey has first been called
+#'
+#' @parameter function.name The function to execute
+#' @parameter args The arguments to the function as a named list
+#' @parameter uid A unique uid specific to a user's account
+rcloud.call <- function(function.name, args = list(), uid)
+{
+  # TODO: most everything
+
+  # Serialize the arguments in ASCII form. To post to RCurl we must convert to a
+  # character vector (it fails for raw vectors) so enforce ASCII to avoid misplaced
+  # null characters. Finally place it in a multipart form container so it is treated
+  # as a binary argument by PiCloud. Note that the filename field must be set to
+  # an empty string or PiCloud will ignore the argument.
+  args.serialized <- serialize(args, NULL, ascii = TRUE) 
+  args.serialized <- rawToChar(args.serialized)
+  args.serialized <- fileUpload("", contents = args.serialized)
+    
+  result <- rcloud.rest.call("rwrapper", uid, params = 
+                             list(r_filename = "\"play2.R\"", arg = args.serialized))
+
+  if(names(result)[1] == "error") warning( paste("Server Error Msg: ", result$error$msg) )
+  
+  result$jid
+}
+
+rcloud.map <- function(function.name, args = list(), uid)
+{
+  sapply(args, function(x) rcloud.call(function.name, x, uid))
+}
+
+#' Retries the status of job(s) from the PiCloud server
+#'
+#' @parameter jids One or more job ids 
+rcloud.info <- function(jids)
+{
+  result <- rcloud.rest.info(jids)
+
+  if(length(jids) == 1) return(result$info)
+
+  result
+}
+
+#' Retrieves the result of jobs from the PiCloud server
+#'
+#' @parameter jids One or more PiCloud job ids
+rcloud.result <- function(jids)
+{
+  if(length(jids) > 1) {
+    sapply(jids, rcloud.result)
+  } else {
+    rcloud.rest.result(jids)
+  }
+}
