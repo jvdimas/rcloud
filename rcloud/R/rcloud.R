@@ -1,7 +1,7 @@
 #' Executes a function remotely on the PiCloud infrastructure
 #' Requires that rcloud.setkey has first been called
 #'
-#' @parameter function.name The function to execute
+#' @parameter function.name The function to execute remotely
 #' @parameter args The arguments to the function as a named list
 #' @parameter uid A unique uid specific to a user's account
 rcloud.call <- function(function.name, args = list(), uid)
@@ -16,9 +16,17 @@ rcloud.call <- function(function.name, args = list(), uid)
   args.serialized <- serialize(args, NULL, ascii = TRUE) 
   args.serialized <- rawToChar(args.serialized)
   args.serialized <- fileUpload("", contents = args.serialized)
+
+  # Serialize the function itself
+  # TODO: This needs a lot of additional work (i.e. if the function calls additional
+  # functions, packages, global variables, etc)
+  f.serialized <- rawToChar(serialize(function.name, NULL, ascii = TRUE))
+  f.serialized <- fileUpload("", contents = f.serialized)
     
   result <- rcloud.rest.call("rwrapper", uid, params = 
-                             list(r_filename = "\"play2.R\"", arg = args.serialized))
+                             list(r_filename = "\"play2.R\"", 
+                                  arg = args.serialized,
+                                  f = f.serialized))
 
   if(names(result)[1] == "error") warning( paste("Server Error Msg: ", result$error$msg) )
   
