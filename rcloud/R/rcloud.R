@@ -1,9 +1,9 @@
 #' Executes a function remotely on the PiCloud infrastructure
 #' Requires that rcloud.setkey has first been called
 #'
-#' @parameter function.name The function to execute remotely
-#' @parameter args The arguments to the function as a named list
-#' @parameter uid A unique uid specific to a user's account
+#' @param function.name The function to execute remotely
+#' @param args The arguments to the function as a named list
+#' @param uid A unique uid specific to a user's account
 rcloud.call <- function(function.name, args = list(), uid)
 {
   # TODO: most everything
@@ -40,7 +40,7 @@ rcloud.map <- function(function.name, args = list(), uid)
 
 #' Retries the status of job(s) from the PiCloud server
 #'
-#' @parameter jids One or more job ids 
+#' @param jids One or more job ids 
 rcloud.info <- function(jids)
 {
   result <- rcloud.rest.info(jids)
@@ -50,9 +50,23 @@ rcloud.info <- function(jids)
   result
 }
 
+#' Returns true if all the jobs in jids are finished
+#' 
+#' @param jids One or more job ids
+rcloud.finished <- function(jids)
+{
+  result <- rcloud.rest.info(jids)
+  
+  done = TRUE
+  for(jid in names(result$info)) {
+    if(result$info[[jid]]$status != "done") done = FALSE
+  }
+  done
+}
+
 #' Retrieves the result of jobs from the PiCloud server
 #'
-#' @parameter jids One or more PiCloud job ids
+#' @param jids One or more PiCloud job ids
 rcloud.result <- function(jids)
 {
   if(length(jids) > 1) {
