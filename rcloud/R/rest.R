@@ -46,16 +46,18 @@ require(rjson)
   response
 }
 
-rcloud.setkey <- function(key, secret.key)
+rcloud.setkey <- function(key, secret.key, uid)
 {
-  Sys.setenv(PICLOUD_KEY=key, PICLOUD_SECRET_KEY=secret.key)
+  Sys.setenv(PICLOUD_KEY=key, PICLOUD_SECRET_KEY=secret.key, PICLOUD_UID=uid)
 }
 
-rcloud.rest.call <- function(function.name, uid, params = list(), key = NULL, 
+rcloud.rest.call <- function(function.name, uid = NULL, params = list(), key = NULL, 
                              secret.key = NULL,
                              ssl.verifypeer = FALSE, ssl.verifyhost = FALSE, timeout = 5,
                              api.url = "http://api.picloud.com/") 
 {
+  if(is.null(uid)) uid <- Sys.getenv("PICLOUD_UID")
+
   request <- paste("r", uid, function.name, "", sep="/")
   
   response <- .rcloud.rest.post(request, params = params, key = key,
@@ -135,9 +137,6 @@ rcloud.rest.result <- function(jid, key = NULL, secret.key = NULL,
                                  ssl.verifyhost = ssl.verifyhost, 
                                  ssl.verifypeer = ssl.verifypeer,
                                  timeout = timeout)
-
-  # The result could be either binary or JSON. Attempt to parse the JSON, if that
-  # fails try to unserialize it. (If that fails....)
   tryCatch(return(fromJSON(result)), 
            error = function(e) return(unserialize(charToRaw(result))))
 }
