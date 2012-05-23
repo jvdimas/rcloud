@@ -179,9 +179,13 @@ rcloud.result <- function(jids, result.only = TRUE)
     sapply(jids, function(jid) rcloud.result(jid, result.only))
   } else {
     if(result.only) {
-      rcloud.rest.result(jids)$result
+      result <- rcloud.rest.result(floor(jids))$result
+      ids <- as.numeric(unlist(strsplit(as.character(jids), "\\.")))
+
+      if(length(ids) == 1 || ids[2] == 0) return(result)
+      return(unlist(result[ids[2]]))
     } else {
-      rcloud.rest.result(jids)
+      rcloud.rest.result(floor(jids))
     }
   }
 }
