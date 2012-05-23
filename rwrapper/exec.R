@@ -1,5 +1,10 @@
 Rfunct <- function(f.binary, args.binary, packages.binary, globals.binary)
 {
+  # Load the rcloud core
+  #source("/tmp/rest.R")
+  #source("/tmp/files.R")
+  #source("/tmp/rcloud.R")
+
   # Unserialize the arguments
   args <- unserialize(charToRaw(args.binary))
 
@@ -9,7 +14,16 @@ Rfunct <- function(f.binary, args.binary, packages.binary, globals.binary)
   # Unserialize the packages
   packages.list <- unserialize(charToRaw(packages.binary))
   packages <- packages.list$names
+
+  # And the repos to check, ensuring that a default CRAN repository is selected
   repos <- packages.list$repos
+  if(repos["CRAN"] == "@CRAN@") repos["CRAN"] = "http://cran.cnr.Berkeley.edu"
+
+  # Create neccessary directories
+  dir.create("~/R")
+  dir.create("~/x86_64-pc-linux-gnu-library")
+  dir.create("~/x86_64-pc-linux-gnu-library/2.12")
+
   # Try to load the package. If it's not installed install it
   sapply(packages, function(p) 
          tryCatch(require(p, character.only = TRUE),
