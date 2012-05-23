@@ -1,4 +1,4 @@
-Rfunct <- function(f.binary, args.binary, packages.binary, globals.binary)
+Rfunct <- function(f.binary, args.binary, packages.binary, globals.binary, n.binary)
 {
   # Load the rcloud core
   #source("/tmp/rest.R")
@@ -14,6 +14,9 @@ Rfunct <- function(f.binary, args.binary, packages.binary, globals.binary)
   # Unserialize the packages
   packages.list <- unserialize(charToRaw(packages.binary))
   packages <- packages.list$names
+
+  # Unserialize the bunching factor used
+  n <- unserialize(charToRaw(n.binary))
 
   # And the repos to check, ensuring that a default CRAN repository is selected
   repos <- packages.list$repos
@@ -38,11 +41,23 @@ Rfunct <- function(f.binary, args.binary, packages.binary, globals.binary)
 
   # Call the function and record the time it spends executing
   elapsed <- system.time(
-  if(is.list(args)) {
-    result <- do.call(f, args)
-  } else {
-    result <- f(args)
-  })[3]
+    if(n == 1) {
+      if(is.list(args)) {
+        result <- do.call(f, args)
+      } else {
+        result <- f(args)
+      }
+    } else {
+      result = list()
+      for(i in 1:n) {
+        if(is.list(args)) {
+          result[i] <- do.call(f, args) 
+        } else {
+          result[i] <- f(args)
+        }
+      }
+    }
+  )[3]
 
   # Include exeuction time with result
   result <- list(result = result, elapsed.time = elapsed)

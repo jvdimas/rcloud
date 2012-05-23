@@ -7,8 +7,10 @@
 #' @param packages a vector containing any packages required
 #' @param repos a list of repositories to install packages from if they are not available
 #' @globals a named list containing any required global variables
+#' @uid uid override (preferred behavior is to set environmental value)
+#' @n Bunching factor. Probably only useful for the map function
 rcloud.call <- function(function.name, args = list(), packages = c(), 
-                        repos = getOption("repos"), globals = list(), uid = NULL)
+                        repos = getOption("repos"), globals = list(), uid = NULL, n = 1)
 {
   # Serialize the arguments in ASCII form. To post to RCurl we must convert to a
   # character vector (it fails for raw vectors) so enforce ASCII to avoid misplaced
@@ -30,13 +32,18 @@ rcloud.call <- function(function.name, args = list(), packages = c(),
   # Serialize the global variables
   globals.serialized <- rawToChar(serialize(globals, NULL, ascii = TRUE))
   globals.serialized <- fileUpload("", contents = globals.serialized)
+
+  # Serialize the bunching factor
+  n.serialized <- rawToChar(serialize(n, NULL, ascii = TRUE))
+  n.serialized <- fileUpload("", contents = n.serialized)
   
   result <- rcloud.rest.call("rwrapper", uid, params = 
                              list(r_filename = "\"exec.R\"", 
                                   arg = args.serialized,
                                   f = f.serialized,
                                   packages = packages.serialized,
-                                  globals = globals.serialized
+                                  globals = globals.serialized,
+                                  n = n.serialized
                                   ))
 
   if(names(result)[1] == "error") warning( paste("Server Error Msg: ", result$error$msg) )
@@ -105,7 +112,26 @@ rcloud.map <- function(function.name, args = list(), packages = c(),
       # n is the bunching factor, i.e. the number of jobs to group together
       # remember that alpha is our target slowdown (the slowdown we hope to achieve
       # by setting the bunching factor to n)
-      n <- round(t.total / (t.total - t.run(slowdown - alpha)))
+      n <- round(t.total / (t.total - t.run * (slowdown - alpha)))
+
+      jid.next <- c()
+      groups <- ceiling((length(args) - Nmin) / n) # number of jobs to submit (after batching)
+
+      for(i in 1:groups) {
+        sub.ids <- 1:min(n, length(args) - Nmin - (i-1)*n)
+
+        sub.args <- (Nmin + (i-1)*n + 1):(Nmin + (i-1)*n + sub.ids[length(sub.ids)])
+        sub.args <- args[sub.args]
+
+        jid <- rcloud.call(function.name, args = sub.args,
+                           packages = packages,
+                           repos = repos,
+                           globals = globals,
+                           uid = uid,
+                           n = length(sub.ids))
+        jid.next = c(jid.next, as.numeric(paste(jid, ".", sub.ids, sep="")))
+      }
+      return(c(jid.first, jid.next))
     # We gave up waiting for info on the status of our jobs. Just send them all
     # as seperate jobs
     } else {
