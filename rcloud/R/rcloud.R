@@ -150,7 +150,7 @@ rcloud.map <- function(function.name, args = list(), packages = c(),
 #' @param jids One or more job ids 
 rcloud.info <- function(jids)
 {
-  result <- rcloud.rest.info(jids)
+  result <- rcloud.rest.info(floor(jids))
 
   if(length(jids) == 1) return(result$info)
 
@@ -162,7 +162,7 @@ rcloud.info <- function(jids)
 #' @param jids One or more job ids
 rcloud.finished <- function(jids)
 {
-  result <- rcloud.rest.info(jids)
+  result <- rcloud.rest.info(floor(jids))
   
   for(jid in names(result$info)) {
     if(result$info[[jid]]$status != "done") return(FALSE)
