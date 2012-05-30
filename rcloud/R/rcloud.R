@@ -118,7 +118,8 @@ rcloud.map <- function(function.name, args = list(), packages = c(),
 
       results <- rcloud.result(jid.first, result.only = FALSE)
       t.run <- sapply(results[2,], c)
-
+      
+      t.run <- t.run + 0.001 # XXX: hack to prevent infinite slowdown for very fast jobs
       slowdown = sum(t.total)/sum(t.run) # a "perfect" slowdown is 1 (i.e. best case)
 
       t.total <- mean(t.total)
@@ -177,7 +178,8 @@ rcloud.info <- function(jids)
 #' @param jids One or more job ids
 rcloud.finished <- function(jids)
 {
-  result <- rcloud.rest.info(floor(jids))
+  jids <- unique(floor(jids)) # prevent duplicate info requests
+  result <- rcloud.rest.info(jids)
   
   for(jid in names(result$info)) {
     if(result$info[[jid]]$status != "done") return(FALSE)
