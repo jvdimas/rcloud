@@ -6,9 +6,9 @@
 #' @param uid A unique uid specific to a user's account
 #' @param packages a vector containing any packages required
 #' @param repos a list of repositories to install packages from if they are not available
-#' @globals a named list containing any required global variables
-#' @uid uid override (preferred behavior is to set environmental value)
-#' @n Bunching factor. Probably only useful for the map function
+#' @param globals a named list containing any required global variables
+#' @param uid uid override (preferred behavior is to set environmental value)
+#' @param n Bunching factor. Probably only useful for the map function
 rcloud.call <- function(function.name, args = list(), packages = c(), 
                         repos = getOption("repos"), globals = list(), uid = NULL, n = 1)
 {
@@ -51,8 +51,23 @@ rcloud.call <- function(function.name, args = list(), packages = c(),
   result$jid
 }
 
-# partial submit -- timing of the initial results
-# automatically determine bunching factor
+#' Repeatedly execute a function remotely on the PiCloud architecture using multiple
+#' function inputs
+#'
+#' @param function.name The function to execute
+#' @param args The arguments to the function as a list of named lists 
+#'              (or just an array if the function has only one argument)
+#' @param uid A unique uid specific to a user's account.
+#' @param packages a vector containing any packages required
+#' @param repos a list of repositories to install packages from if they are not available
+#' @param globals a named list containing any required global variables
+#' @param uid uid override (preferred behavior is to set environmental value)
+#' @param Nmin Bunching algorithm parameter. The minimum number of function calls before
+#'             bunching is considered.
+#' @param Nsend Bunching algorithm parameter. The number of jobs to send for determining
+#'              the bunching factor. Must be strictly less than Nmin. Larger values will
+#'              produce more accurate results for functions with high variance in runtime
+#'              over the argument space but at the tradeoff of higher startup time.
 rcloud.map <- function(function.name, args = list(), packages = c(), 
                         repos = getOption("repos"), globals = list(), uid = NULL,
                         Nmin = 10, Nsend = 5, Twait = 60, alpha = 1.2)
