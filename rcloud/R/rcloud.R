@@ -131,12 +131,12 @@ rcloud.map <- function(function.name, args = list(), packages = c(),
       n <- round(t.total / (t.total - t.run * (slowdown - alpha)))
 
       jid.next <- c()
-      groups <- ceiling((length(args) - Nmin) / n) # number of jobs to submit (after batching)
+      groups <- ceiling((length(args) - Nsend) / n) # number of jobs to submit (after batching)
 
       for(i in 1:groups) {
-        sub.ids <- 1:min(n, length(args) - Nmin - (i-1)*n)
+        sub.ids <- 1:min(n, length(args) - Nsend - (i-1)*n)
 
-        sub.args <- (Nmin + (i-1)*n + 1):(Nmin + (i-1)*n + sub.ids[length(sub.ids)])
+        sub.args <- (Nsend + (i-1)*n + 1):(Nsend + (i-1)*n + sub.ids[length(sub.ids)])
         sub.args <- args[sub.args]
 
         jid <- rcloud.call(function.name, args = sub.args,
