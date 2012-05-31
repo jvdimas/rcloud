@@ -51,9 +51,9 @@ Rfunct <- function(f.binary, args.binary, packages.binary, globals.binary, n.bin
       result = list()
       for(i in 1:n) {
         if(is.list(args)) {
-          result[i] <- do.call(f, args) 
+          result[i] <- do.call(f, args[i]) 
         } else {
-          result[i] <- f(args)
+          result[i] <- f(args[i])
         }
       }
     }
