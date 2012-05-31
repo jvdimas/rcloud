@@ -70,7 +70,7 @@ rcloud.call <- function(function.name, args = list(), packages = c(),
 #'              over the argument space but at the tradeoff of higher startup time.
 rcloud.map <- function(function.name, args = list(), packages = c(), 
                         repos = getOption("repos"), globals = list(), uid = NULL,
-                        Nmin = 10, Nsend = 5, Twait = 60, alpha = 1.2)
+                        Nmin = 10, Nsend = 5, Twait = 60, alpha = 1.05)
 {
   if(Nsend > Nmin) {
     error("Nmin must be greater than or equal to Nsend.")
@@ -179,7 +179,7 @@ rcloud.info <- function(jids)
 rcloud.finished <- function(jids)
 {
   jids <- unique(floor(jids)) # prevent duplicate info requests
-  result <- rcloud.rest.info(jids)
+  tryCatch(result <- rcloud.rest.info(jids), error = function(err) { return(FALSE) })
   
   for(jid in names(result$info)) {
     if(result$info[[jid]]$status != "done") return(FALSE)
