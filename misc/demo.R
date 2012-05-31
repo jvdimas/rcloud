@@ -28,9 +28,18 @@ jids
 rcloud.finished(jids)
 pies <- rcloud.result(jids)
 pies
+pies <- unlist(pies)
 mean(pies)
 
-###################################################
+# Get info on runtimes
+info <- rcloud.info(jids)
+runtimes <- sapply(names(info$info), function(x) info$info[[x]]$runtime)
+sum(runtimes)
+mean(runtimes)
+sd(runtimes)
+
+
+##################################################################################
 # Now something with more dependencies
 
 ## Function to generate the pxp covariance matrix of the required form
@@ -73,12 +82,15 @@ fun <- function(samples) {
   Rhoi12 <- matrix(Rhoi12, samples, length(x))
 }
 
-jid <- rcloud.call(fun, 1000, globals = list(constructSigma = constructSigma), packages = "mnormt")
+jid <- rcloud.call(fun, 1000, globals = list(constructSigma = constructSigma), 
+                   packages = "mnormt")
 rcloud.info(jid)
 Rhoi12 <- rcloud.result(jid)
+head(Rhoi12)
 
 png("fun.png")
-plot(x,colMeans(Rhoi12),ylim=c(0,1),pch=19,cex=.5, main="Estimating Rho of Inverse Matrix",xlab="p",ylab="Rho12")
+plot(x,colMeans(Rhoi12),ylim=c(0,1),pch=19,cex=.5, 
+     main="Estimating Rho of Inverse Matrix",xlab="p",ylab="Rho12")
 lines(x,colMeans(Rhoi12)+apply(Rhoi12, 2, sd))
 lines(x=x,y=colMeans(Rhoi12)-apply(Rhoi12, 2, sd))
 dev.off()
